@@ -24,7 +24,7 @@ router.post("/addProduct", (req, res)=> {
         return
     }
 
-    if (cart.some(item=>item.prodId === newIdProduct.id )){
+    if (cart.some(item=>item.prodId === newIdProduct.prodId )){
         res.status(400).send("El producto ya esta en el carrito");
         return; 
     }
