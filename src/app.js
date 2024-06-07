@@ -13,6 +13,9 @@ app.listen(PUERTO, ()=>{
     displayRoutes(app)
 })
 
+app.get("/", (req, res) => {
+    res.send(`Bienvenido a mi primer servidor!`)
+})
 
 app.use("/api/products", productsRouter)
-app.use("/api/cart", cartRouter)
+app.use("/api/carts", cartRouter)

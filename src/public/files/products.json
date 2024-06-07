@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "name": "Temistac contraste oral",
+    "brand": "Temistac",
+    "description": "Contraste oral hidrosoluble en frasco de 125 ml ",
+    "price": "47658.80",
+    "img": "imagen",
+    "categorie": "contrastes",
+    "code": "abc123",
+    "stock": 80,
+    "status": true
+  },
+  {
+    "id": 2,
+    "name": "Contraste Endovenoso ",
+    "brand": "Xenetix",
+    "description": "Contraste endovenoso en frascos de 500ml ",
+    "price": "769017.58",
+    "img": "imagen",
+    "categorie": "contrastes",
+    "code": "abc124",
+    "stock": 0,
+    "status": true
+  },
+  {
+    "id": 3,
+    "name": "Jeringa prellenada",
+    "brand": "Optiray",
+    "description": "Jeringas prellenadas de 125ml listas para ser colocadas en bomba inyectora",
+    "price": "154099.80",
+    "img": "img",
+    "categorie": "contrastes",
+    "code": "abc125",
+    "stock": 50,
+    "status": true
+  }
+]
