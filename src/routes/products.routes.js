@@ -34,7 +34,7 @@ router.get("/", (req, res) => {
     res.json(products);
 })
 
-router.get("/:id", (req, res) => {
+router.get("/:pid", (req, res) => {
 
     let {id} = req.params; 
     let productFinded = products.find(product => product.id === parseInt(id)); 
@@ -67,7 +67,7 @@ router.post("/newProduct", (req, res)=> {
     res.status(201).json({ id })
     })
 
-router.delete("/deleteProduct/:id", (req, res) => {
+router.delete("/deleteProduct/:pid", (req, res) => {
     const id = parseInt(req.params.id);
 
     const productFound = products.find(p => p.id === id);
@@ -81,18 +81,18 @@ router.delete("/deleteProduct/:id", (req, res) => {
         }
 })
 
-router.put("/editProduct/:id", (req,res)=>{
+router.put("/editProduct/:pid", (req,res)=>{
     const id=parseInt(req.params.id);
-    const { stock, status } = req.body;
+    const { name, brand, description, price, img, categorie, code, stock, status } = req.body;
 
     const productFound = products.find(p => p.id === id);
 
     if(productFound){
         const index = products.findIndex(p => p.id === id);
 
-        products[index] = { ...products[index], stock, status }
+        products[index] = { ...products[index], name, brand, description, price, img, categorie, code, stock, status }
         res.json({
-        message: "Usuario actualizado con exito!",
+        message: "Producto actualizado con exito!",
         response: products[index]
     })
 

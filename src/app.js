@@ -11,7 +11,6 @@ app.use(express.urlencoded({extended:true}))
 
 app.listen(PUERTO, ()=>{
     displayRoutes(app)
-    console.log(`listeneando el puerto ${PUERTO}`)
 })
 
 
