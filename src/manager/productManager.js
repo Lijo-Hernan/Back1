@@ -29,7 +29,7 @@ class ProductManager {
     }
 
 
-    async addProduct({ name, brand, description, price, img, code, stock, category}) {
+    async addProduct({ name, brand, description, price, img, code, stock, category, status}) {
         try {
             const products = await this.readFile();
 
@@ -52,7 +52,7 @@ class ProductManager {
                 code,
                 stock,
                 category,
-                status: true,
+                status, 
             };
 
             if (products.length > 0) {

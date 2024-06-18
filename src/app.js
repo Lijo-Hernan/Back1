@@ -27,9 +27,9 @@ const httpServer = app.listen(PUERTO, ()=>{
 });
 
 //Rutas
-app.get("/", (req, res) => {
-    res.send(`Bienvenido a mi primer servidor!`)
-});
+// app.get("/", (req, res) => {
+//     res.send(`Bienvenido a mi primer servidor!`)
+// });
 
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartRouter);
@@ -42,7 +42,6 @@ const productManager = new ProductManager("./src/public/files/products.json");
 const io = new Server(httpServer);
 
 io.on("connection", async (socket) => {
-    console.log("Un cliente se conecto"); 
 
     //Enviamos el array de productos: 
     socket.emit("products", await productManager.getProducts());

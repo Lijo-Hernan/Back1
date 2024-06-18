@@ -1,26 +1,54 @@
 const socket = io(); 
 
 socket.on("products", (data) => {
-    renderProductos(data);
+    renderProducts(data);
 })
 
 
-const renderProductos = (data) => {
+const renderProducts = (data) => {
     const productCont = document.getElementById("productCont");
     productCont.innerHTML = "";
 
     data.forEach(item => {
         const card = document.createElement("div"); 
         
-        card.innerHTML = `  <p> ${item.name} </p>
+        card.innerHTML = `
+                            <p> ${item.name} </p>
                             <p> ${item.brand} </p>
                             <p> ${item.price} </p>
                             <button> Eliminar </button>
                         `
         productCont.appendChild(card); 
-        //Agregamos un evento al boton de eliminar: 
+        
         card.querySelector("button").addEventListener("click", () => {
-            eliminarProducto(item.id); 
+            deleteProduct(item.id); 
         })
     })
+}
+
+const deleteProduct = (id) => {
+    socket.emit ("deleteProduct", id)
+
+}
+
+
+document.getElementById("btnEnviar").addEventListener("click", () => {
+    addProduct();
+})
+
+
+const addProduct = () => {
+    const product = {
+        name: document.getElementById("name").value,
+        brand: document.getElementById("brand").value,
+        description: document.getElementById("description").value,
+        price: document.getElementById("price").value,
+        img: document.getElementById("img").value,
+        code: document.getElementById("code").value,
+        stock: document.getElementById("stock").value,
+        category: document.getElementById("category").value,
+        status: document.getElementById("status").value,
+    }
+
+    socket.emit("addProduct", product);
 }
