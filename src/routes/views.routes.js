@@ -7,9 +7,7 @@ router.get("/realtimeproducts", async (req, res)=>{
 
 
 router.get("/", async (req, res)=>{
-    
     res.render("home")
-    
 })
 
 export default router

@@ -10,7 +10,9 @@ const renderProducts = (data) => {
     productCont.innerHTML = "";
 
     data.forEach(item => {
-        const card = document.createElement("div"); 
+        const card = document.createElement("div");
+        card.classList.add("productCont");
+        
         
         card.innerHTML = `
                             <p> ${item.name} </p>

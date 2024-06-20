@@ -1,0 +1,77 @@
+body {
+    background-color: aliceblue;
+}
+
+a{
+    text-decoration: none;
+    color: black;
+}
+
+h1, h2 {
+    text-align: center;
+}
+
+.btn { 
+    margin: 2rem;
+}
+
+.list {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    border: solid black 3px;
+    padding: 2rem;
+}
+
+.product {
+    border: solid grey 3px;
+    padding: 1rem;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.mainCont {
+    display: flex;
+    justify-content: space-around;
+    height: fit-content;
+}
+
+.product__box {
+    width: 70%;
+    font-weight: 600;
+}
+
+.productCont {
+    display: flex;
+    flex-direction: column;
+    margin: 1rem;
+    text-align: center;
+
+    border: black solid 2px;
+    box-shadow: -11px 14px 8px 0px rgba(0,0,0,0.65);
+    -webkit-box-shadow: -11px 14px 8px 0px rgba(0,0,0,0.65);
+    -moz-box-shadow: -11px 14px 8px 0px rgba(0,0,0,0.65);
+}
+
+.productCont button {
+    width: 20%;
+    align-self: last baseline;
+}
+
+.form {
+    width: 50vh;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border: black solid 2px;
+    box-shadow: -11px 14px 8px 0px rgba(0,0,0,0.65);
+    -webkit-box-shadow: -11px 14px 8px 0px rgba(0,0,0,0.65);
+    -moz-box-shadow: -11px 14px 8px 0px rgba(0,0,0,0.65);
+}
+
+.form__int {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+

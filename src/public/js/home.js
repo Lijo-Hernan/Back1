@@ -10,12 +10,12 @@ const listProducts = (data) => {
 
     data.forEach(item => {
         const card = document.createElement("div"); 
+        card.classList.add("product");
         
         card.innerHTML = `
-            <p> ${item.name} </p>
-            <p> ${item.brand} </p>
-            <p> ${item.img} </p>
-            <p> ${item.price} </p>
+            <p> Producto: ${item.name} </p>
+            <p>Marca: ${item.brand} </p>
+            <p> Precio: ${item.price} </p>
         `;
         productList.appendChild(card); 
     });
