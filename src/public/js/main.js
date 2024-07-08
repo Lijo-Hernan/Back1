@@ -23,7 +23,7 @@ const renderProducts = (data) => {
         productCont.appendChild(card); 
         
         card.querySelector("button").addEventListener("click", () => {
-            deleteProduct(item.id); 
+            deleteProduct(item._id); 
         })
     })
 }
