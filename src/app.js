@@ -6,6 +6,7 @@ import productsRouter from "./routes/products.routes.js"
 import cartRouter from "./routes/cart.routes.js"
 import viewsRouter from "./routes/views.routes.js"
 import productsModel from "./models/products.model.js"
+import cartsModel from "./models/carts.model.js"
 import "./database.js"
 
 
@@ -29,6 +30,7 @@ const httpServer = app.listen(PUERTO, ()=>{
 
 app.use("/", viewsRouter);
 app.use("/products", productsRouter);
+app.use("/carts", cartRouter);
 
 const io = new Server(httpServer);
 
@@ -72,6 +74,33 @@ io.on("connection", async (socket) => {
         } catch (error) {
             console.error("Error al agregar el producto:", error);
             socket.emit("error", "Error al agregar el producto"); // Enviar un mensaje de error al cliente si ocurre un problema
+        }
+    })
+
+
+     //Enviamos el array de carritos: 
+    socket.emit("carts",  await cartsModel.find());
+
+    socket.on("deleteCart", async (id) => {
+        try {
+            if (!id) {
+                socket.emit("error", "ID de carrito no proporcionado");
+                return;
+            }
+
+            const deletedCart = await cartsModel.findByIdAndDelete(id); // Eliminar el producto por su ID
+
+            if (!deletedCart) {
+                socket.emit("error", "Carrito no encontrado");
+                return;
+            }
+
+            // Le voy a enviar la lista actualizada al cliente
+            io.sockets.emit("carts", await cartsModel.find());
+            
+        } catch (error) {
+            console.error("Error al eliminar el carrito:", error);
+            socket.emit("error", "Error al eliminar el carrito"); // Enviar un mensaje de error al cliente si ocurre un problema
         }
     })
 })

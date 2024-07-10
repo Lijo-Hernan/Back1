@@ -142,7 +142,7 @@ router.post("/", async (req, res) => {
         
         await newProduct.save();
         
-        res.status(201).send("Producto agregado exitosamente");
+        res.status(201).send(`Producto agregado exitosamente con id: ${newProduct._id}`);
 
     } catch (error) {
         console.error("Error al agregar producto", error);

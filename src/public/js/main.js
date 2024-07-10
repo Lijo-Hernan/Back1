@@ -13,12 +13,12 @@ const renderProducts = (data) => {
         const card = document.createElement("div");
         card.classList.add("productCont");
         
-        
         card.innerHTML = `
-                            <p> ${item.name} </p>
-                            <p> ${item.brand} </p>
-                            <p> ${item.price} </p>
-                            <button> Eliminar </button>
+                            <p>Producto: ${item.name} </p>
+                            <p>Marca: ${item.brand} </p>
+                            <p>Precio: ${item.price} </p>
+                            <p>Stock: ${item.stock} </p>
+                            <button class="btn btn-warning"> Eliminar </button>
                         `
         productCont.appendChild(card); 
         

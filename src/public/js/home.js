@@ -16,8 +16,14 @@ const listProducts = (data) => {
             <p> Producto: ${item.name} </p>
             <p>Marca: ${item.brand} </p>
             <p> Precio: ${item.price} </p>
+            <input type="number" id="cantidad" placeholder="cantidad">
+            <button class="btn btn-success">Agregar al carrito</button>
         `;
         productList.appendChild(card); 
+
+        card.querySelector("button").addEventListener("click", () => {
+            addProductToCart(item._id, "cantidad"); 
+        })
     });
 };
 
