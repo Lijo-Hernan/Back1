@@ -1,3 +1,4 @@
+
 const socket = io(); 
 
 socket.on("carts", (data) => {
@@ -6,21 +7,22 @@ socket.on("carts", (data) => {
 
 
 const renderCarts = (data) => {
-
+    
     const cartsCont = document.getElementById("cartsCont");
     cartsCont.innerHTML = "";
-
+    
     data.forEach(item => {
+
         const card = document.createElement("div");
         card.classList.add("productCartCont");
-
         let productsCart = '';
         item.products.forEach(product => {
+        
         productsCart += `
             <div class="productCont">
-                <p>Producto ID: ${product.prodId}</p>
+                <p>Producto ID: ${product.productId}</p>
                 <p>Cantidad: ${product.quantity}</p>
-                <button class="btn btn-warning" data-prodid="${product.prodId}">Eliminar producto</button>
+                <button class="btn btn-warning" data-prodid="${product.productId}">Eliminar producto</button>
             </div>
                 `;
     });
@@ -36,8 +38,8 @@ const renderCarts = (data) => {
 
         card.querySelectorAll('.productCont button').forEach(button => {
             button.addEventListener("click", (event) => {
-                const prodId = event.target.getAttribute('data-prodid');
-                deleteProdCart(prodId); 
+                const prodId = event.currentTarget.getAttribute('data-prodid');
+                deleteProdCart(prodId, item._id); 
             });
         });
         
@@ -51,6 +53,6 @@ const deleteCart = (id) => {
     socket.emit ("deleteCart", id)
 }
 
-const deleteProdCart = (prodId) => {
-    socket.emit ("deleteProdCart", prodId)
+const deleteProdCart = (prodId, id) => {
+    socket.emit ("deleteProdCart", prodId, id)
 }

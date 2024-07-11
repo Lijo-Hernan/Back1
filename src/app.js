@@ -29,8 +29,8 @@ const httpServer = app.listen(PUERTO, ()=>{
 
 
 app.use("/", viewsRouter);
-app.use("/products", productsRouter);
-app.use("/carts", cartRouter);
+app.use("/api/products", productsRouter);
+app.use("/api/carts", cartRouter);
 
 const io = new Server(httpServer);
 
@@ -78,9 +78,10 @@ io.on("connection", async (socket) => {
     })
 
 
-     //Enviamos el array de carritos: 
+    //Enviamos el array de carritos: 
     socket.emit("carts",  await cartsModel.find());
 
+    //Borrado de carrito 
     socket.on("deleteCart", async (id) => {
         try {
             if (!id) {
@@ -102,5 +103,45 @@ io.on("connection", async (socket) => {
             console.error("Error al eliminar el carrito:", error);
             socket.emit("error", "Error al eliminar el carrito"); // Enviar un mensaje de error al cliente si ocurre un problema
         }
+    })
+
+    //Borrado de producto dentro de  carrito
+    socket.on("deleteProdCart", async (prodId, id) => {
+
+        try {
+            if (!id) {
+                socket.emit("error", "ID de carrito no proporcionado");
+                return;
+            }
+
+            const deletedProd = await cartsModel.removeProdFromCart(id, prodId); // Eliminar el producto por su ID
+
+            if (!deletedProd) {
+                socket.emit("error", "Carrito no encontrado");
+                return;
+            }
+
+            // Le voy a enviar la lista actualizada al cliente
+            io.sockets.emit("carts", await cartsModel.find());
+            
+        } catch (error) {
+            console.error("Error al eliminar el carrito:", error);
+            socket.emit("error", "Error al eliminar el carrito"); // Enviar un mensaje de error al cliente si ocurre un problema
+        }
+        
+    })
+
+    //Armado de carrito desde el Home
+    socket.on("addProdToCart", async (productData) => {
+            
+        try {
+            const prodsAdded = await cartsModel.addProdToCartPage(prodId, quantity);
+            socket.emit('redirect', { url: '/realtimecarts' });
+        } catch (error) {
+            console.error('Error generando carrito:', error);
+            // Emite un evento de error si es necesario
+            socket.emit('error', { message: 'Error agregando productos' });
+        }
+
     })
 })

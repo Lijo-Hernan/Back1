@@ -7,13 +7,16 @@ a{
     color: black;
 }
 
-h1, h2 {
+h1, h3, h2 {
     text-align: center;
 }
 
 .btn { 
     margin: 2rem;
     width: fit-content;
+}
+.btn__carrito {
+    width: 100%;
 }
 
 .botones__home {
