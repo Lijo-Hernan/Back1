@@ -2,10 +2,8 @@ const socket = io();
 
         
 const addProdToCart = (id, quantity) => {
-    const productData = { id: itemId, quantity };
-    socket.emit("addProdToCart", productData);
-    console.log(productData)
-
+    
+    socket.emit("addProdToCart", id, quantity);
 }
 
 const listProducts = (data) => {
@@ -38,7 +36,6 @@ const listProducts = (data) => {
                 const quantity = quantityInput ? parseInt(quantityInput.value) : 0;
                 if (quantity > 0) {
                     addProdToCart(item._id, quantity);
-                    console.log(item._id)
                 }
             });
         });

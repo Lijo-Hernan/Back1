@@ -64,31 +64,15 @@ cartSchema.statics.removeProdFromCart = async function(cartId, prodId) {
 };
 
 //creo nuevo carrito desde la pagina
-cartSchema.statics.addProdToCartPage = async function(prodId, quantity) {
-    console.log(prodId, quantity)
-    let cart;
-    // Si el cartId es válido, intenta encontrar el carrito por ID
-    // if (mongoose.Types.ObjectId.isValid(cartId)) {
-    //     cart = await this.findById(cartId);
-    // }
+cartSchema.statics.addProdToCartPage = async function(productId, quantity) {
+    console.log("recieve 1" ,productId)   
+    console.log("Recieve 2" ,quantity) 
+    
+    
+    let cart = new this({products: [] });
 
-    // Si no existe el carrito, crea uno nuevo
-    if (!cart) {
-        cart = new this({ products: [] });
-    }
+        cart.products.push({ productId: productId, quantity: quantity});
 
-    // Busca el producto en el carrito
-    const productIndex = cart.products.findIndex(p => p.productId === prodId);
-
-    if (productIndex !== -1) {
-        // Si el producto ya está en el carrito, actualiza la cantidad
-        cart.products[productIndex].quantity += quantity;
-    } else {
-        // Si el producto no está en el carrito, añádelo
-        cart.products.push({ productId: prodId, quantity: quantity});
-    }
-
-    // Guarda los cambios en el carrito
     await cart.save();
 
     return cart;

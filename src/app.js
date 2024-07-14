@@ -132,10 +132,11 @@ io.on("connection", async (socket) => {
     })
 
     //Armado de carrito desde el Home
-    socket.on("addProdToCart", async (productData) => {
-            
+    socket.on("addProdToCart", async (id, quantity) => {
+        // console.log("recieve 1" ,id)   
+        // console.log("Recieve 2" ,quantity)   
         try {
-            const prodsAdded = await cartsModel.addProdToCartPage(prodId, quantity);
+            const prodsAdded = await cartsModel.addProdToCartPage(id, quantity);
             socket.emit('redirect', { url: '/realtimecarts' });
         } catch (error) {
             console.error('Error generando carrito:', error);
