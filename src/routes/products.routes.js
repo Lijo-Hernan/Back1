@@ -146,7 +146,7 @@ router.post("/", async (req, res) => {
 
     } catch (error) {
         console.error("Error al agregar producto", error);
-        res.status(500).sens("Error interno del servidor");
+        res.status(500).send(`Error interno del servidor: ${error} `);
     }
 });
 

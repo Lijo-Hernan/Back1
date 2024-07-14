@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+
 const colection = "carts";
 
 const cartSchema = new mongoose.Schema ({
@@ -7,8 +8,16 @@ const cartSchema = new mongoose.Schema ({
     products: [
 
         {
-            productId: { type: String, required: true },
-            quantity: { type: Number, required: true }
+            productId: {
+                // type:String,
+                type: mongoose.Schema.Types.ObjectId,
+                ref:"products",
+                required: true
+            },
+            quantity: { 
+                type: Number, 
+                required: true 
+            }
         
     }]
     
@@ -20,7 +29,7 @@ cartSchema.statics.addProdToCart = async function(cartId, prodId, quantity) {
     let cart;
     // Si el cartId es válido, intenta encontrar el carrito por ID
     if (mongoose.Types.ObjectId.isValid(cartId)) {
-        cart = await this.findById(cartId);
+        cart = await this.findById(cartId).populate("products.productId");
     }
 
     // Si no existe el carrito, crea uno nuevo
@@ -29,7 +38,13 @@ cartSchema.statics.addProdToCart = async function(cartId, prodId, quantity) {
     }
 
     // Busca el producto en el carrito
-    const productIndex = cart.products.findIndex(p => p.productId === prodId);
+    const productIndex = cart.products.findIndex(p => {
+        if (typeof p.productId === 'object') {
+            return p.productId._id.toString() === prodId.toString();
+        } else {
+            return p.productId.toString() === prodId.toString();
+        }
+    });
 
     if (productIndex !== -1) {
         // Si el producto ya está en el carrito, actualiza la cantidad
@@ -55,7 +70,7 @@ cartSchema.statics.removeProdFromCart = async function(cartId, prodId) {
     }
 
     // Filtra el array de productos para eliminar el producto con el productId dado
-    cart.products = cart.products.filter(p => p.productId !== prodId);
+    cart.products = cart.products.filter(p => p.productId !== prodId._id);
 
     // Guarda los cambios en el carrito
     await cart.save();
@@ -64,25 +79,32 @@ cartSchema.statics.removeProdFromCart = async function(cartId, prodId) {
 };
 
 //creo nuevo carrito desde la pagina
-cartSchema.statics.addProdToCartPage = async function(productId, quantity) {
-    console.log("recieve 1" ,productId)   
-    console.log("Recieve 2" ,quantity) 
-    
+cartSchema.statics.addProdToCartPage = async function(products) {
     
     let cart = new this({products: [] });
 
-        cart.products.push({ productId: productId, quantity: quantity});
+    for (let { productId, quantity } of products) {
+        // Busca el producto en el carrito
+        const productIndex = cart.products.findIndex(p => {
+            if (typeof p.productId === 'object') {
+                return p.productId._id.toString() === productId.toString();
+            } else {
+                return p.productId.toString() === productId.toString();
+            }
+        });
 
+        cart.products.push({ productId: mongoose.Types.ObjectId(productId), quantity: quantity });
+    }
     await cart.save();
 
     return cart;
 };
 
 
-
-
-
-
+cartSchema.pre("findOne", function(next) {
+    this.populate("products.productId");
+    next(); 
+})
 
 
 const cartsModel = mongoose.model(colection, cartSchema)

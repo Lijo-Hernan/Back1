@@ -27,6 +27,14 @@ const httpServer = app.listen(PUERTO, ()=>{
     displayRoutes(app)
 });
 
+const stats = async ()=> {
+    const resp= await productsModel.find({status:true}).explain("executionStats");
+
+    console.log(resp)
+}
+
+// stats()
+
 
 app.use("/", viewsRouter);
 app.use("/api/products", productsRouter);

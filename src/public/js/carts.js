@@ -55,4 +55,5 @@ const deleteCart = (id) => {
 
 const deleteProdCart = (prodId, id) => {
     socket.emit ("deleteProdCart", prodId, id)
+    console.log(prodId, id)
 }
