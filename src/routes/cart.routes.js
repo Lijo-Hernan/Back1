@@ -1,34 +1,35 @@
 import { Router } from "express";
 import fs from "fs";
 import path from "path";
-import CartManager from "../manager/cartsManager.js";
-import cartsModel from "../models/carts.model.js";
+import CartManager from "../dao/db/cartManagerDb.js";
+import cartsModel from "../dao/models/carts.model.js";
 
 const router = Router(); 
 
 const cartsFilePath = path.resolve("./src/public/files/carts.json");
 const productsFilePath = path.resolve("./src/public/files/products.json");
-const cartManager = new CartManager("./src/public/files/carts.json");
+const cartManager = new CartManager();
 
-router.get("/", async (req, res) => {
+router.get("/", async (req,res)=>{
 
     const limit = parseInt(req.query.limit, 10);
 
     try {
-        let carts
+        
+        const carts= await cartManager.getCarts();
 
-        if(!isNaN(limit)&& limit>0){
-            carts= await cartsModel.find().limit(limit)
+        if(limit){
+            res.status(200).json(carts.slice(0,limit));
         }else {
-            carts= await cartsModel.find()
+            res.status(200).json(carts);
         }
-
-        res.status(200).json(carts)
 
     } catch (error) {
         console.error("error al limitar la lista", error)
         res.status(500).send("error de servidor");
     }
+
+    
 })
 
 // router.get("/", (req, res) => {
@@ -60,8 +61,10 @@ router.get("/", async (req, res) => {
 
 router.get("/:cid", async (req, res) => {
 
+    const id = req.params.cid
+
     try {
-        const cartFinded = await cartsModel.findById(req.params.cid)
+        const cartFinded = await cartManager.getCartById(id);
         if (!cartFinded) {
             return res.status(404).json({error: "Carrito no encontrado"}).status(404);
             }
@@ -153,13 +156,23 @@ router.get("/:cid", async (req, res) => {
 //     res.status(201).json(cart);
 // });
 
+router.post("/", async (req, res) => {
+    try {
+        const newCart = await cartManager.createCart();
+        res.json(newCart);
+    } catch (error) {
+        console.error("Error al crear un nuevo carrito", error);
+        res.status(500).json({ error: "Error interno del servidor" });
+    }
+});
+
 router.post("/:cid/product/:pid", async (req, res) => {
     const cartId = req.params.cid;
     const prodId = req.params.pid;
     const quantity = parseInt(req.query.quantity) || 1;
 
     try {
-        const updateCart = await cartsModel.addProdToCart(cartId, prodId, quantity);
+        const updateCart = await cartManager.addProdToCart(cartId, prodId, quantity);
         res.json(updateCart.products);
     } catch (error) {
         console.error("Error al agregar producto al carrito", error);
@@ -170,8 +183,9 @@ router.post("/:cid/product/:pid", async (req, res) => {
 router.delete("/:cid", async (req, res) => {
 
     try {
-        const cartFinded = await cartsModel.findByIdAndDelete(req.params.cid)
-        if (!cartFinded) {
+        const cartFinded = await cartManager.deleteCart(req.params.cid)
+
+        if (cartFinded) {
             return res.status(404).json({error: "Carrito no encontrado"}).status(404);
             }
         res.status(200).send("Carrito eliminado correctamente");
@@ -189,13 +203,26 @@ router.delete('/:cid/product/:pid', async (req, res) => {
     const prodId = req.params.pid;
 
     try {
-        const updatedCart = await cartsModel.removeProdFromCart(cartId, prodId);
+        const updatedCart = await cartManager.removeProdCart(cartId, prodId);
         res.json(updatedCart.products);
     } catch (error) {
         console.error('Error al eliminar producto del carrito', error);
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 });
+
+router.delete('/:cid/product', async (req, res)=>{
+    const cartId = req.params.cid;
+
+    try {
+        const emptyCart= await cartManager.emptyCart(cartId);
+        res.json({message: "Carrito vacio"})
+        
+    } catch (error) {
+        console.error('Error al vaciar el carrito', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+})
 
 
 export default router; 

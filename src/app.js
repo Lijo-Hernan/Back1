@@ -5,14 +5,16 @@ import { Server } from "socket.io"
 import productsRouter from "./routes/products.routes.js"
 import cartRouter from "./routes/cart.routes.js"
 import viewsRouter from "./routes/views.routes.js"
-import productsModel from "./models/products.model.js"
-import cartsModel from "./models/carts.model.js"
+import productsModel from "./dao/models/products.model.js"
+import CartManager from "./dao/db/cartManagerDb.js"
+import ProductManager from "./dao/db/productManagerDb.js"
 import "./database.js"
 
 
 const PUERTO = 8080;
 const app = express();
-
+const cartManager = new CartManager();
+const productManager = new ProductManager();
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
@@ -45,7 +47,7 @@ const io = new Server(httpServer);
 io.on("connection", async (socket) => {
 
     //Enviamos el array de productos: 
-    socket.emit("products",  await productsModel.find());
+    socket.emit("products",  await productManager.getProducts());
 
     //Recibimos el evento "eliminarProducto" desde el cliente: 
     socket.on("deleteProduct", async (id) => {
@@ -55,7 +57,7 @@ io.on("connection", async (socket) => {
                 return;
             }
 
-            const deletedProduct = await productsModel.findByIdAndDelete(id); // Eliminar el producto por su ID
+            const deletedProduct = await productManager.deleteProduct(id); // Eliminar el producto por su ID
 
             if (!deletedProduct) {
                 socket.emit("error", "Producto no encontrado");
@@ -63,7 +65,7 @@ io.on("connection", async (socket) => {
             }
 
             // Le voy a enviar la lista actualizada al cliente
-            io.sockets.emit("products", await productsModel.find());
+            io.sockets.emit("products", await productManager.getProducts());
             
         } catch (error) {
             console.error("Error al eliminar el producto:", error);
@@ -74,20 +76,19 @@ io.on("connection", async (socket) => {
     //Agregamos productos por medio de un formulario: 
     socket.on("addProduct", async (product) => {
         try {
-            const newProduct = new productsModel(product); // Crear una instancia del modelo con los datos del producto
-            await newProduct.save(); // Guardar la instancia en la base de datos
+        
+            const newProduct = await productManager.addProduct(product);
 
-            // Le voy a enviar la lista actualizada al cliente
-            io.sockets.emit("products", await productsModel.find());
+            io.sockets.emit("products", await productManager.getProducts());
+
         } catch (error) {
             console.error("Error al agregar el producto:", error);
-            socket.emit("error", "Error al agregar el producto"); // Enviar un mensaje de error al cliente si ocurre un problema
+            socket.emit("error", "Error al agregar el producto");
         }
     })
 
-
     //Enviamos el array de carritos: 
-    socket.emit("carts",  await cartsModel.find());
+    socket.emit("carts", await cartManager.getCarts());
 
     //Borrado de carrito 
     socket.on("deleteCart", async (id) => {
@@ -97,19 +98,18 @@ io.on("connection", async (socket) => {
                 return;
             }
 
-            const deletedCart = await cartsModel.findByIdAndDelete(id); // Eliminar el producto por su ID
+            const deletedCart = await cartManager.deleteCart(id);
 
             if (!deletedCart) {
                 socket.emit("error", "Carrito no encontrado");
                 return;
             }
-
             // Le voy a enviar la lista actualizada al cliente
-            io.sockets.emit("carts", await cartsModel.find());
+            io.sockets.emit(cartManager.getCarts());
             
         } catch (error) {
             console.error("Error al eliminar el carrito:", error);
-            socket.emit("error", "Error al eliminar el carrito"); // Enviar un mensaje de error al cliente si ocurre un problema
+            socket.emit("error", "Error al eliminar el carrito");
         }
     })
 
@@ -122,15 +122,14 @@ io.on("connection", async (socket) => {
                 return;
             }
 
-            const deletedProd = await cartsModel.removeProdFromCart(id, prodId); // Eliminar el producto por su ID
-
+            const deletedProd = await cartManager.removeProdCart(id, prodId); // Eliminar el producto por su ID
+            
             if (!deletedProd) {
                 socket.emit("error", "Carrito no encontrado");
                 return;
             }
-
             // Le voy a enviar la lista actualizada al cliente
-            io.sockets.emit("carts", await cartsModel.find());
+            io.sockets.emit(cartManager.getCarts());
             
         } catch (error) {
             console.error("Error al eliminar el carrito:", error);
@@ -140,13 +139,21 @@ io.on("connection", async (socket) => {
     })
 
     //Armado de carrito desde el Home
-    socket.on("addProdToCart", async (id, quantity) => {
-        // console.log("recieve 1" ,id)   
-        // console.log("Recieve 2" ,quantity)   
+    socket.on("addProdToCart", async (products) => {
         try {
-            const prodsAdded = await cartsModel.addProdToCartPage(id, quantity);
-            socket.emit('redirect', { url: '/realtimecarts' });
-        } catch (error) {
+            let cart = await cartManager.createCart();
+
+            if (!cart) {
+                throw new Error('Error al crear o encontrar el carrito');
+            }
+
+            for (const { id, quantity } of products) {
+                await cartManager.addProdToCart(cart._id, id, quantity);
+            }
+            socket.emit('redirect', { url: `/realtimecarts` });
+        }
+
+        catch (error) {
             console.error('Error generando carrito:', error);
             // Emite un evento de error si es necesario
             socket.emit('error', { message: 'Error agregando productos' });

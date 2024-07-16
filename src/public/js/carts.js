@@ -20,9 +20,9 @@ const renderCarts = (data) => {
         
         productsCart += `
             <div class="productCont">
-                <p>Producto ID: ${product.productId}</p>
+                <p>Producto ID: ${product.product}</p>
                 <p>Cantidad: ${product.quantity}</p>
-                <button class="btn btn-warning" data-prodid="${product.productId}">Eliminar producto</button>
+                <button class="btn btn-warning" data-prodid="${product.product}">Eliminar producto</button>
             </div>
                 `;
     });
@@ -32,7 +32,7 @@ const renderCarts = (data) => {
                             <p class= "cart__id">Cart Id: ${item._id} </p>
                             <button class="btn btn-warning">Eliminar carrito</button>
                     </span>
-                        ${productsCart}
+                        ${productsCart}    
                         `
         cartsCont.appendChild(card); 
 

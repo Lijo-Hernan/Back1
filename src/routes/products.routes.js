@@ -1,40 +1,28 @@
 import { Router } from "express";
 import fs from "fs"
 import path from "path"
-import ProductManager from "../manager/productManager.js";
-import productsModel from "../models/products.model.js";
+import ProductManager from "../dao/db/productManagerDb.js";
 
 const router = Router(); 
 
-const productManager = new ProductManager("./src/public/files/products.json");
+const productManager = new ProductManager();
 
 const productsFilePath = path.resolve("./src/public/files/products.json");
 
-
-// router.get("/", async (req,res)=>{
-//     try {
-//         const products = await productsModel.find();
-//         res.send(products);
-//     } catch (error) {
-//         res.status(500).send("error de servidor");
-//     }
-
-// })
 
 router.get("/", async (req,res)=>{
 
     const limit = parseInt(req.query.limit, 10);
 
     try {
-        let products
+        
+        const products= await productManager.getProducts();
 
-        if(!isNaN(limit)&& limit>0){
-            products= await productsModel.find().limit(limit)
+        if(limit){
+            res.status(200).json(products.slice(0,limit));
         }else {
-            products= await productsModel.find()
+            res.status(200).json(products);
         }
-
-        res.status(200).json(products)
 
     } catch (error) {
         console.error("error al limitar la lista", error)
@@ -43,6 +31,29 @@ router.get("/", async (req,res)=>{
 
     
 })
+
+// router.get("/", async (req,res)=>{
+
+//     const limit = parseInt(req.query.limit, 10);
+
+//     try {
+//         let products
+
+//         if(!isNaN(limit)&& limit>0){
+//             products= await productsModel.find().limit(limit)
+//         }else {
+//             products= await productsModel.find()
+//         }
+
+//         res.status(200).json(products)
+
+//     } catch (error) {
+//         console.error("error al limitar la lista", error)
+//         res.status(500).send("error de servidor");
+//     }
+
+    
+// })
 
 // router.get("/", (req,res)=>{
 //     const data = fs.readFileSync(productsFilePath, "utf-8");
@@ -98,7 +109,8 @@ router.get("/", async (req,res)=>{
 router.get("/:pid", async (req, res) => {
     
     try {
-        const productFinded = await productsModel.findById(req.params.pid)
+        const productFinded = await productManager.getProductById(req.params.pid)
+
         if (!productFinded) {
             return res.status(404).json({error: "Producto no encontrado"}).status(404);
             }
@@ -110,6 +122,22 @@ router.get("/:pid", async (req, res) => {
         res.status(500).send("Error interno del servidor");
     }
 });
+
+// router.get("/:pid", async (req, res) => {
+    
+//     try {
+//         const productFinded = await productsModel.findById(req.params.pid)
+//         if (!productFinded) {
+//             return res.status(404).json({error: "Producto no encontrado"}).status(404);
+//             }
+//         res.status(200).json(productFinded);
+
+//     } catch (error) {
+//         console.error("prod no encontrado", error);
+
+//         res.status(500).send("Error interno del servidor");
+//     }
+// });
 
 
 // router.post("/", (req, res)=> {
@@ -138,11 +166,10 @@ router.get("/:pid", async (req, res) => {
 router.post("/", async (req, res) => {
     
     try {
-        const newProduct = new productsModel(req.body);
+        const newProduct = await productManager.addProduct(req.body);
+
         
-        await newProduct.save();
-        
-        res.status(201).send(`Producto agregado exitosamente con id: ${newProduct._id}`);
+        res.status(201).send(`Producto agregado exitosamente`);
 
     } catch (error) {
         console.error("Error al agregar producto", error);
@@ -216,7 +243,7 @@ router.post("/", async (req, res) => {
 router.delete("/:pid", async (req, res) => {
 
     try {
-        const productFinded = await productsModel.findByIdAndDelete(req.params.pid)
+        const productFinded = await productManager.deleteProduct(req.params.pid)
         if (!productFinded) {
             return res.status(404).json({error: "Producto no encontrado"}).status(404);
             }
@@ -275,19 +302,14 @@ router.delete("/:pid", async (req, res) => {
 
 router.put("/:pid", async (req, res) => {
 
+    const id= req.params.pid;
+    const productUpdate = req.body
+
     try {
 
-        const productEdited = await productsModel.findByIdAndUpdate(
-            req.params.pid, 
-            req.body,
-            { new: true }
-        );
+        await productManager.updateProduct(id, productUpdate);
 
-        if (!productEdited) {
-            return res.status(404).json({ error: "Producto no encontrado" });
-        }
-
-        res.status(200).json({ productEdited });
+        res.status(200).json({message: "Product actualizado exitosamente"});
 
     } catch (error) {
         console.error("Error al actualizar producto", error);

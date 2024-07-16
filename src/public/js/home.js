@@ -1,10 +1,10 @@
 const socket = io();
 
         
-const addProdToCart = (id, quantity) => {
+// const addProdToCart = (id, quantity) => {
     
-    socket.emit("addProdToCart", id, quantity);
-}
+//     socket.emit("addProdToCart", id, quantity);
+// }
 
 const listProducts = (data) => {
     const productList = document.getElementById("productList");
@@ -24,20 +24,23 @@ const listProducts = (data) => {
             <p> Producto: ${item.name} </p>
             <p>Marca: ${item.brand} </p>
             <p> Precio: ${item.price} </p>
-            <input type="number" id="quantity-${item._id}" placeholder="cantidad">
+            <input type="number" id="quantity-${item._id}" placeholder="cantidad" min="0" max="${item.stock}">
         `;
         productList.appendChild(card); 
         })
 
         addToCartButton.addEventListener("click", () => {
-            // Recorre cada campo de cantidad y agrega el producto al carrito
+            const productsToAdd = [];
+
             data.forEach(item => {
                 const quantityInput = document.getElementById(`quantity-${item._id}`);
                 const quantity = quantityInput ? parseInt(quantityInput.value) : 0;
                 if (quantity > 0) {
-                    addProdToCart(item._id, quantity);
+                    productsToAdd.push({ id: item._id, quantity: quantity });
                 }
             });
+        
+            socket.emit("addProdToCart", productsToAdd);
         });
 };
 
