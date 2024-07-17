@@ -9,7 +9,6 @@ const cartSchema = new mongoose.Schema ({
 
         {
             product: {
-                // type:String,
                 type: mongoose.Schema.Types.ObjectId,
                 ref:"products",
                 required: true
@@ -22,9 +21,6 @@ const cartSchema = new mongoose.Schema ({
     }]
     
 })
-
-//aca va lo borrado
-
 
 cartSchema.pre("findOne", function(next) {
     this.populate("products.product");

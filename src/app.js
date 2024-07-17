@@ -45,10 +45,8 @@ const io = new Server(httpServer);
 
 io.on("connection", async (socket) => {
 
-    //Enviamos el array de productos: 
     socket.emit("products",  await productManager.getProducts({page:1, limit:5}));
 
-     // Manejar solicitudes de productos con paginación
     socket.on('getProducts', async ({ page= 1, limit= 5 } = {}) => {
         try {
             const productsData = await productManager.getProducts({ page, limit });
@@ -67,19 +65,18 @@ io.on("connection", async (socket) => {
                 return;
             }
 
-            const deletedProduct = await productManager.deleteProduct(id); // Eliminar el producto por su ID
+            const deletedProduct = await productManager.deleteProduct(id);
 
             if (!deletedProduct) {
                 socket.emit("error", "Producto no encontrado");
                 return;
             }
 
-            // Le voy a enviar la lista actualizada al cliente
             io.sockets.emit("products", await productManager.getProducts({ page: 1, limit: 5 }));
             
         } catch (error) {
             console.error("Error al eliminar el producto:", error);
-            socket.emit("error", "Error al eliminar el producto"); // Enviar un mensaje de error al cliente si ocurre un problema
+            socket.emit("error", "Error al eliminar el producto"); 
         }
     })
 
@@ -95,10 +92,8 @@ io.on("connection", async (socket) => {
         }
     })
 
-    //Enviamos el array de carritos: 
     socket.emit("carts", await cartManager.getCarts());
 
-    //Borrado de carrito 
     socket.on("deleteCart", async (id) => {
         try {
             if (!id) {
@@ -121,7 +116,6 @@ io.on("connection", async (socket) => {
         }
     })
 
-    //Borrado de producto dentro de  carrito
     socket.on("deleteProdCart", async (prodId, id) => {
 
         try {
@@ -130,23 +124,22 @@ io.on("connection", async (socket) => {
                 return;
             }
 
-            const deletedProd = await cartManager.removeProdCart(id, prodId); // Eliminar el producto por su ID
+            const deletedProd = await cartManager.removeProdCart(id, prodId);
             
             if (!deletedProd) {
                 socket.emit("error", "Carrito no encontrado");
                 return;
             }
-            // Le voy a enviar la lista actualizada al cliente
+
             io.sockets.emit(cartManager.getCarts());
             
         } catch (error) {
             console.error("Error al eliminar el carrito:", error);
-            socket.emit("error", "Error al eliminar el carrito"); // Enviar un mensaje de error al cliente si ocurre un problema
+            socket.emit("error", "Error al eliminar el carrito");
         }
         
     })
 
-    //Armado de carrito desde el Home
     socket.on("addProdToCart", async (products) => {
         try {
             let cart = await cartManager.createCart();
@@ -165,7 +158,6 @@ io.on("connection", async (socket) => {
 
         catch (error) {
             console.error('Error generando carrito:', error);
-            // Emite un evento de error si es necesario
             socket.emit('error', { message: 'Error agregando productos' });
         }
 
