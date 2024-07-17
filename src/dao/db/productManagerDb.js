@@ -40,11 +40,45 @@ class ProductManager {
     }
 
 
-    async getProducts() {
-        try {
-            const products = await productsModel.find();
-            return products;
+    // async getProducts() {
+    //     try {
+    //         const products = await productsModel.find();
+    //         return products;
 
+    //     } catch (error) {
+    //         console.log("Error de servidor", error);
+    //         throw error;
+    //     }
+    // }
+
+    async getProducts({ page = 1, limit = 5 } = {}) {
+        const skip = (page - 1) * limit;
+        const products = await productsModel.find().skip(skip).limit(limit);
+        const totalProducts = await productsModel.countDocuments();
+        const totalPages = Math.ceil(totalProducts / limit);
+        
+        // page = Number.isNaN(parseInt(page, 10)) ? 1 : parseInt(page, 10);
+        // limit = Number.isNaN(parseInt(limit, 10)) ? 5 : parseInt(limit, 10);
+        try {
+            const options = {
+                page,
+                limit
+            };
+            
+            const result = await productsModel.paginate({}, options);
+
+            let products = result.docs.map(prods => prods.toObject() )
+    
+            return {
+                products,
+                totalPages,
+            currentPage: page,
+            hasPrevPage: page > 1,
+            hasNextPage: page < totalPages,
+            prevPage: page > 1 ? page - 1 : null,
+            nextPage: page < totalPages ? page + 1 : null
+            };
+    
         } catch (error) {
             console.log("Error de servidor", error);
             throw error;

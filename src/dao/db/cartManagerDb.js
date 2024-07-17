@@ -69,7 +69,8 @@ class CartManager {
             if (!cart) {
                 throw new Error(`No existe un carrito con el id ${cartId}`);
             }
-            return null;
+            return cart;
+
         } catch (error) {
             console.error("Error al obtener el carrito por ID", error);
             throw error;
@@ -86,8 +87,6 @@ class CartManager {
             }
 
             cart.products = cart.products.filter(p => p.product._id.toString() !== prodId.toString());
-
-
 
             await cart.save();
 

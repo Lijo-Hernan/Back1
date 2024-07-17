@@ -46,7 +46,19 @@ const io = new Server(httpServer);
 io.on("connection", async (socket) => {
 
     //Enviamos el array de productos: 
-    socket.emit("products",  await productManager.getProducts());
+    socket.emit("products",  await productManager.getProducts({page:1, limit:5}));
+
+     // Manejar solicitudes de productos con paginación
+    socket.on('getProducts', async ({ page= 1, limit= 5 } = {}) => {
+        try {
+            const productsData = await productManager.getProducts({ page, limit });
+            socket.emit('products', productsData);
+            
+        } catch (error) {
+            console.error('Error fetching products:', error);
+            socket.emit('error', 'Error fetching products');
+        }
+    });
 
     //Recibimos el evento "eliminarProducto" desde el cliente: 
     socket.on("deleteProduct", async (id) => {
@@ -64,7 +76,7 @@ io.on("connection", async (socket) => {
             }
 
             // Le voy a enviar la lista actualizada al cliente
-            io.sockets.emit("products", await productManager.getProducts());
+            io.sockets.emit("products", await productManager.getProducts({ page: 1, limit: 5 }));
             
         } catch (error) {
             console.error("Error al eliminar el producto:", error);
@@ -75,10 +87,9 @@ io.on("connection", async (socket) => {
     //Agregamos productos por medio de un formulario: 
     socket.on("addProduct", async (product) => {
         try {
-        
             const newProduct = await productManager.addProduct(product);
 
-            io.sockets.emit("products", await productManager.getProducts());
+            io.sockets.emit("products", await productManager.getProducts({ page: 1, limit: 5 }));
 
         } catch (error) {
             console.error("Error al agregar el producto:", error);
@@ -103,9 +114,9 @@ io.on("connection", async (socket) => {
                 socket.emit("error", "Carrito no encontrado");
                 return;
             }
-            // Le voy a enviar la lista actualizada al cliente
+
             io.sockets.emit(cartManager.getCarts());
-            
+
         } catch (error) {
             console.error("Error al eliminar el carrito:", error);
             socket.emit("error", "Error al eliminar el carrito");
@@ -144,12 +155,14 @@ io.on("connection", async (socket) => {
 
             if (!cart) {
                 throw new Error('Error al crear o encontrar el carrito');
-            }
-
+            } else {
             for (const { id, quantity } of products) {
                 await cartManager.addProdToCart(cart._id, id, quantity);
             }
+            
             socket.emit('redirect', { url: `/realtimecarts` });
+            
+            }
         }
 
         catch (error) {
@@ -160,3 +173,47 @@ io.on("connection", async (socket) => {
 
     })
 })
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const categorys = async() => {
+        
+    const result= await productsModel.aggregate([
+    {
+        $match: {
+            category: "contrastes"
+        }
+    },
+    {   
+        $group: {
+            _id: "$name",
+            total: {
+                $sum:"$price"
+            }
+        }
+    },
+    {
+        $sort: {
+            total: 1
+            // 1 asc
+            //-1 desc
+        }
+    }
+    ])
+    
+    console.log(result)
+}
+// categorys()
+
+const pagination = async ()=> {
+
+    const pag = await productsModel.paginate({},
+
+    {limit:5, page: 1}
+    )
+
+    console.log(pag)
+
+}
+// pagination()

@@ -126,3 +126,17 @@ h1, h3, h2 {
     align-self: center;
 }
 
+.pagination-controls{
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    text-align: center;
+}
+.pageInfo {
+    font-weight: bold;
+}
+.input {
+    width: 70%;
+}
+

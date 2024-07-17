@@ -55,5 +55,10 @@ const deleteCart = (id) => {
 
 const deleteProdCart = (prodId, id) => {
     socket.emit ("deleteProdCart", prodId, id)
-    console.log(prodId, id)
 }
+socket.on('updateCarts', (carts) => {
+    console.log('Carritos actualizados:', carts);
+});
+socket.on('error', (message) => {
+    console.error('Error recibido:', message);
+});

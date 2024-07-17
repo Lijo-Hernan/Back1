@@ -12,17 +12,20 @@ const productsFilePath = path.resolve("./src/public/files/products.json");
 
 router.get("/", async (req,res)=>{
 
-    const limit = parseInt(req.query.limit, 10);
+    const limit = parseInt(req.query.limit, 10)|| 5;
+    const page = parseInt(req.query.page, 10)|| 1;
 
     try {
-        
-        const products= await productManager.getProducts();
 
-        if(limit){
-            res.status(200).json(products.slice(0,limit));
-        }else {
-            res.status(200).json(products);
-        }
+        
+        const products= await productManager.getProducts(page, limit);
+
+        // if(limit){
+        //     res.status(200).json(products.slice(0,limit));
+        // }else {
+        //     res.status(200).json(products);
+        // }
+        res.status(200).json(products);
 
     } catch (error) {
         console.error("error al limitar la lista", error)
