@@ -11,14 +11,13 @@ const productsFilePath = path.resolve("./src/public/files/products.json");
 
 
 router.get("/", async (req,res)=>{
-
-    const limit = parseInt(req.query.limit, 10)|| 5;
-    const page = parseInt(req.query.page, 10)|| 1;
-
+    
     try {
-
         
-        const products= await productManager.getProducts(page, limit);
+        const limit = parseInt(req.query.limit, 10)|| 5;
+        const page = parseInt(req.query.page, 10)|| 1;
+        
+        const products= await productManager.getProductsApi(page, limit);
 
         // if(limit){
         //     res.status(200).json(products.slice(0,limit));
