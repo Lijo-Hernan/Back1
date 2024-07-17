@@ -1,11 +1,6 @@
 const socket = io();
 
         
-// const addProdToCart = (id, quantity) => {
-    
-//     socket.emit("addProdToCart", id, quantity);
-// }
-
 const listProducts = (data) => {
     const productList = document.getElementById("productList");
     productList.innerHTML = ``;
