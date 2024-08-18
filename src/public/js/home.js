@@ -19,8 +19,14 @@ const listProducts = (data) => {
             <p> Producto: ${item.name} </p>
             <p>Marca: ${item.brand} </p>
             <p> Precio: ${item.price} </p>
+            <p> Stock disponible: ${item.stock} </p>
             <input type="number" id="quantity-${item._id}" placeholder="cantidad" min="0" max="${item.stock}" class="input">
         `;
+        if (item.stock === 0) {
+            const input = card.querySelector(`#quantity-${item._id}`);
+            input.disabled = true;
+        }
+
         productList.appendChild(card); 
         })
 
