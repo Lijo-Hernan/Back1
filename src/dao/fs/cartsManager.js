@@ -6,7 +6,6 @@ class CartManager {
         this.path = path;
         this.ultId = 0;
 
-        // Cargar los carritos almacenados en el archivo
         this.readCarts();
     }
 
