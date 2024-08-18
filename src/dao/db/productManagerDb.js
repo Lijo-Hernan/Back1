@@ -59,7 +59,6 @@ class ProductManager {
 
         page = parseInt(page, 10) || 1;
         limit = parseInt(limit, 10) || 5;
-        console.log(page, limit)
 
         // page = Number.isNaN(parseInt(page, 10)) ? 1 : parseInt(page, 10);
         // limit = Number.isNaN(parseInt(limit, 10)) ? 5 : parseInt(limit, 10);
@@ -68,7 +67,6 @@ class ProductManager {
                 page,
                 limit
             };
-            console.log(options)
             const result = await productsModel.paginate({}, options);
 
             const products = result.docs.map(prods => prods.toObject() )
@@ -97,7 +95,6 @@ class ProductManager {
 
         page = parseInt(page, 10) || 1;
         limit = parseInt(limit, 10) || 5;
-        console.log(page, limit)
 
         // page = Number.isNaN(parseInt(page, 10)) ? 1 : parseInt(page, 10);
         // limit = Number.isNaN(parseInt(limit, 10)) ? 5 : parseInt(limit, 10);
@@ -106,7 +103,6 @@ class ProductManager {
                 page,
                 limit
             };
-            console.log(options)
             const result = await productsModel.paginate({}, options);
 
             return result

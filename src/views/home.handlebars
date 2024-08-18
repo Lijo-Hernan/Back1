@@ -1,8 +1,12 @@
-<h1>Bienvenidos, lista de productos</h1>
+<h1>Bienvenido {{usuario}}, lista de productos</h1>
+
 
 <div class="botones__home">
-    <a href="/realtimeproducts"  class="btn btn-primary button">Editar lista de productos</a>   
-    <a href="/realtimecarts"  class="btn btn-primary button">Ver Carritos</a>
+    <a href="api/sessions/admin"  class="btn btn-primary button">Editar lista de productos</a>  
+    <a href="/realtimecarts"  class="btn btn-primary button">Ver Carrito</a>
+    <form action="/api/sessions/logout" method="POST">
+        <button type="submit" class="btn btn-primary button"> Cerrar sesion </button>
+    </form>
 </div>
 
     <h3>Seleccione las cantidades necesarias antes de agregar al carrito</h3>
@@ -10,4 +14,4 @@
 
 
 <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
-<script src="js/home.js"></script>
+<script src="/js/home.js"></script>
