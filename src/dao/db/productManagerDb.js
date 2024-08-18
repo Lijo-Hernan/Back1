@@ -84,18 +84,7 @@ class ProductManager {
             const result = await productsModel.paginate({}, options);
 
             return result
-            // const products = result.docs.map(prods => prods.toObject() )
-    
-            // return {
-            //     products,
-            //     totalPages,
-            // currentPage: page,
-            // hasPrevPage: page > 1,
-            // hasNextPage: page < totalPages,
-            // prevPage: page > 1 ? page - 1 : null,
-            // nextPage: page < totalPages ? page + 1 : null
-            // };
-    
+
         } catch (error) {
             console.log("Error de servidor", error);
             throw error;
