@@ -11,11 +11,16 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
     "express": "^4.19.2",
     "express-handlebars": "^7.1.2",
     "express-routemap": "^1.6.0",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.4.4",
     "mongoose-paginate-v2": "^1.8.2",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
     "socket.io": "^4.7.5"
   }
 }

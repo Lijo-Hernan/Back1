@@ -5,10 +5,14 @@ import { Server } from "socket.io"
 import productsRouter from "./routes/products.routes.js"
 import cartRouter from "./routes/cart.routes.js"
 import viewsRouter from "./routes/views.routes.js"
+import sessionRouter from "./routes/session.routes.js"
 import productsModel from "./dao/models/products.model.js"
 import CartManager from "./dao/db/cartManagerDb.js"
 import ProductManager from "./dao/db/productManagerDb.js"
 import "./database.js"
+import passport from "passport";
+import initializePassport from "./config/passport.config.js";
+import cookieParser from "cookie-parser" 
 
 
 const PUERTO = 8080;
@@ -19,6 +23,9 @@ const productManager = new ProductManager();
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(express.static("./src/public"));
+app.use(cookieParser());
+app.use(passport.initialize());
+initializePassport();
 
 app.engine("handlebars", engine());
 app.set("views", "./src/views");
@@ -40,6 +47,7 @@ const stats = async ()=> {
 app.use("/", viewsRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartRouter);
+app.use("/api/sessions", sessionRouter);
 
 const io = new Server(httpServer);
 
