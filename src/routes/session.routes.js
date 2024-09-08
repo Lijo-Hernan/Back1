@@ -40,7 +40,7 @@ router.post("/register", async(req,res)=> {
             httpOnly: true
         })
         
-        res.redirect("/current")
+        res.redirect("/api/sessions/current")
 
     } catch (error) {
         res.status(500).send("error de registro del servidor")

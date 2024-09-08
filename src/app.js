@@ -12,13 +12,14 @@ import ProductManager from "./dao/db/productManagerDb.js"
 import "./database.js"
 import passport from "passport";
 import initializePassport from "./config/passport.config.js";
-import cookieParser from "cookie-parser" 
+import cookieParser from "cookie-parser"; 
+import configObject from "./config/config.js"
 
-
-const PUERTO = 8080;
+const {PORT}= configObject;
+// const PUERTO = 8080;
 const app = express();
 const cartManager = new CartManager();
-const productManager = new ProductManager();
+const productManager = new ProductManager(); 
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
@@ -32,8 +33,9 @@ app.set("views", "./src/views");
 app.set("view engine", "handlebars");
 
 
-const httpServer = app.listen(PUERTO, ()=>{
+const httpServer = app.listen(PORT,()=>{
     displayRoutes(app)
+    console.log("escuchando en el puerto:" +PORT)
 });
 
 const stats = async ()=> {
