@@ -14,6 +14,7 @@ import passport from "passport";
 import initializePassport from "./config/passport.config.js";
 import cookieParser from "cookie-parser"; 
 import configObject from "./config/config.js"
+import cors from "cors"
 
 const {PORT}= configObject;
 // const PUERTO = 8080;
@@ -26,6 +27,7 @@ app.use(express.urlencoded({extended:true}));
 app.use(express.static("./src/public"));
 app.use(cookieParser());
 app.use(passport.initialize());
+app.use(cors());
 initializePassport();
 
 app.engine("handlebars", engine());
