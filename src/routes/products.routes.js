@@ -2,6 +2,8 @@ import { Router } from "express";
 import fs from "fs"
 import path from "path"
 import ProductManager from "../dao/db/productManagerDb.js";
+import ProductDTO from "../dto/product.dto.js";
+import {productService} from "../services/productService.js";
 
 const router = Router(); 
 
@@ -18,6 +20,7 @@ router.get("/", async (req,res)=>{
         const page = parseInt(req.query.page, 10)|| 1;
         
         const products= await productManager.getProductsApi(page, limit);
+        // const products= await productService.getProducts();
 
         // if(limit){
         //     res.status(200).json(products.slice(0,limit));
@@ -166,12 +169,13 @@ router.get("/:pid", async (req, res) => {
 //     })
 
 router.post("/", async (req, res) => {
+
+    const { name, brand, description, price, img, category, code, stock, status } = req.body;
     
     try {
-        const newProduct = await productManager.addProduct(req.body);
-
-        
-        res.status(201).send(`Producto agregado exitosamente`);
+        const productDTO = new ProductDTO(name, brand, description, price, img, category, code, stock, status);
+        const product = await productManager.addProduct(productDTO);
+        res.status(201).send(`Producto agregado exitosamente`).json(product);
 
     } catch (error) {
         console.error("Error al agregar producto", error);

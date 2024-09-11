@@ -1,3 +1,5 @@
 node_modules/
 REALapp.js
 .env
+.env.desarrollo
+.env.produccion

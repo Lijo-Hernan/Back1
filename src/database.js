@@ -11,9 +11,9 @@ const {MONGO_URL}= configObject;
 //     .then(()=> console.log("conectado a mongo"))
 //     .catch((error)=>console.log("error de coneccion:", error))
 
-class BaseDatos {
+class DB {
     static #instancia; 
-    //Se declara una variable estaticaa y privada llamada instancia. 
+    
     constructor() {
         mongoose.connect(MONGO_URL);
     }
@@ -23,10 +23,10 @@ class BaseDatos {
             console.log("Conexion previa");
             return this.#instancia;
         } 
-        this.#instancia = new BaseDatos();
+        this.#instancia = new DB();
         console.log("Conexion exitosa"); 
         return this.#instancia; 
     }
 }
 
-export default BaseDatos.getInstancia(); 
+export default DB.getInstancia(); 

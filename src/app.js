@@ -17,7 +17,7 @@ import configObject from "./config/config.js"
 import cors from "cors"
 
 const {PORT}= configObject;
-// const PUERTO = 8080;
+const PUERTO = 8080;
 const app = express();
 const cartManager = new CartManager();
 const productManager = new ProductManager(); 
