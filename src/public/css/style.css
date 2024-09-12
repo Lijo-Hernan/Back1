@@ -94,6 +94,45 @@ h1, h3, h2 {
     border-radius: 10px;
 }
 
+.contactBody {
+    display: flex;
+    justify-content: center;
+}
+.form1 {
+    width: 70vh;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+    border: black solid 2px;
+    position: sticky;
+    top: 0;
+    margin-top: 1rem;
+    box-shadow: -11px 14px 8px 0px rgba(0,0,0,0.65);
+    -webkit-box-shadow: -11px 14px 8px 0px rgba(0,0,0,0.65);
+    -moz-box-shadow: -11px 14px 8px 0px rgba(0,0,0,0.65);
+    border-radius: 10px;
+    justify-self: center;
+}
+
+.form2 {
+    width: 70vh;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    border: black solid 2px;
+    position: sticky;
+    top: 0;
+    margin-top: 1rem;
+    box-shadow: -11px 14px 8px 0px rgba(0,0,0,0.65);
+    -webkit-box-shadow: -11px 14px 8px 0px rgba(0,0,0,0.65);
+    -moz-box-shadow: -11px 14px 8px 0px rgba(0,0,0,0.65);
+    border-radius: 10px;
+    justify-self: center;
+}
+
 .form__int {
     display: flex;
     flex-direction: column;

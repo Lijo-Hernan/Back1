@@ -1,8 +1,17 @@
-<h1>Bienvenido {{usuario}}</h1>
-
+<h1>Bienvenido {{usuario.nombre}}</h1>
+<h2>Rol: {{usuario.rol}}</h2>
 <div class="botones__home">
-    <a href="/home"  class="btn btn-primary button">Continuar al eComerce</a>
+    <a id="dynamic-link" class="btn btn-primary button">Continuar</a>
     <form action="/api/sessions/logout" method="POST">
-        <button type="submit" class="btn btn-primary button"> Cerrar sesion </button>
-</form>
+        <button type="submit" class="btn btn-primary button">Cerrar sesión</button>
+    </form>
 </div>
+
+<script>
+    const rol = "{{usuario.rol}}";
+    const link = document.getElementById('dynamic-link');
+    link.href = (rol === 'admin') ? '/realtimeproducts' : '/home';
+    link.textContent = (rol === 'admin') ? 'Ir al panel de administrador' : 'Continuar al eCommerce';
+</script>
+
+

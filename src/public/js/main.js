@@ -75,6 +75,7 @@ document.getElementById("btnEnviar").addEventListener("click", () => {
 
 
 const addProduct = () => {
+    const productForm = document.getElementById("productForm");
     const product = {
         name: document.getElementById("name").value,
         brand: document.getElementById("brand").value,
@@ -88,4 +89,5 @@ const addProduct = () => {
     }
 
     socket.emit("addProduct", product);
+    productForm.reset();
 }
