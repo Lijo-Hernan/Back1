@@ -86,9 +86,6 @@ router.post("/login", async (req, res) => {
 
 router.get("/current", passport.authenticate("jwt",{ session:false }), (req,res)=>{
     
-    // if(req.user){
-    //     res.render("bienv", {usuario: req.user.usuario});
-
     if(req.user){
         const user=req.user;
         const userDTO= new UserDTO(user)
@@ -103,15 +100,5 @@ router.post("/logout", (req, res) => {
     res.clearCookie("abueloToken");
     res.redirect("/"); 
 })
-
-
-// router.get("/admin", passport.authenticate("jwt", {session:false}), (req, res) => {
-    
-//     if(req.user.rol !== "admin") {
-//         return res.status(403).render("sinPermisos"); 
-//     } 
-//     res.render("realtimeproducts"); 
-// })
-
 
 export default router 

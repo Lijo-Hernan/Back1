@@ -5,8 +5,6 @@ import passport from "passport";
 
 const router = Router();
 
-// router.use(passport.authenticate('jwt', {session: false}));
-
 router.get("/realtimecarts", async (req, res)=>{
     res.render("realtimecarts")
 })

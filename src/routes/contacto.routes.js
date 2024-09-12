@@ -57,7 +57,6 @@ router.post ("/enviarmensaje", async (req, res)=> {
 
             ]
         })
-        // res.send("mensaje enviado correctamente, responderemos a la brevedad")
         res.redirect('/home?message=success'); 
 
         

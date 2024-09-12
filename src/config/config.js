@@ -1,8 +1,6 @@
 import dotenv from "dotenv";
 import program from "../utils/commander.js";
 
-// dotenv.config();
-
 const {mode} = program.opts(); 
 
 dotenv.config({
