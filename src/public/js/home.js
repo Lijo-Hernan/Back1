@@ -88,5 +88,14 @@ socket.on('redirect', (data) => {
     window.location.href = data.url;
 });
 
+const urlParams = new URLSearchParams(window.location.search);
+const message = urlParams.get('message');
+    if (message === 'success') {
+        alert("Mensaje enviado correctamente, responderemos a la brevedad");
+    } else if (message === 'error') {
+        alert("Hubo un problema al enviar tu mensaje. Intenta nuevamente.");
+    }
+
+
 
 

@@ -1,7 +1,8 @@
 <h1>Bienvenido</h1>
 <h3>Inicie sesion</h3>
 
-<form action="api/sessions/login" method="post">
+<div class="contactBody">
+<form action="api/sessions/login" method="post" class="form">
 
 <label for="usuario"> 
     Usuario: <input type="text" name="usuario" placeholder="nombre de usuario" required>
@@ -13,9 +14,10 @@
 </label>
 <br>
 <br>
-<button type="submit" class="btn btn-primary button">Iniciar sesion</button>
+<button type="submit" class="btn btn-success button">Iniciar sesion</button>
 
 </form>
+</div>
 
 <div class="botones__home">
     <a href="/register" class="btn btn-primary button">Registrarse</a>

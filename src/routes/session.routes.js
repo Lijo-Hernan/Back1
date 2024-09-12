@@ -4,6 +4,8 @@ import { createHash, isValidPassword } from "../utils/util.js";
 import passport from "passport";
 import jwt from "jsonwebtoken";
 import CartManager from "../dao/db/cartManagerDb.js";
+import userService from "../services/userService.js";
+import UserDTO from "../dto/user.dto.js";
 
 const router = Router()
 const cartManager = new CartManager();
@@ -22,6 +24,7 @@ router.post("/register", async(req,res)=> {
         }
 
         const newUSer = new UsersModel({
+        // const newUSer = await userService.newUser({
             usuario,
             nombre,
             apellido,
@@ -29,18 +32,19 @@ router.post("/register", async(req,res)=> {
             edad,
             rol,
             password: createHash(password), 
+            // password, 
             cartId: newCartId,
         })
         await newUSer.save()
 
-        const token= jwt.sign({usuario: newUSer.nombre, rol: newUSer.rol }, "elAbuelo", {expiresIn: "2h"});
+        const token= jwt.sign({usuario: newUSer.nombre, rol: newUSer.rol, email: newUSer.email }, "elAbuelo", {expiresIn: "2h"});
 
         res.cookie("abueloToken", token, {
             maxAge: 10800000,
             httpOnly: true
         })
         
-        res.redirect("/current")
+        res.redirect("/api/sessions/current")
 
     } catch (error) {
         res.status(500).send("error de registro del servidor")
@@ -54,6 +58,7 @@ router.post("/login", async (req, res) => {
 
     try {
         const userFinded = await UsersModel.findOne({ usuario });
+        // const userFinded= await userService.loginUser(usuario, password);
 
         if (!userFinded) {
             return res.status(401).send("Credenciales invalidas");
@@ -63,7 +68,7 @@ router.post("/login", async (req, res) => {
             return res.status(401).send("Credenciales invalidas");
         }
         
-        const token = jwt.sign({ usuario: userFinded.usuario, rol: userFinded.rol }, "elAbuelo", { expiresIn: "2h" });
+        const token = jwt.sign({ usuario: userFinded.usuario, rol: userFinded.rol, email: userFinded.email, nombre: userFinded.nombre }, "elAbuelo", { expiresIn: "2h" });
 
         res.cookie("abueloToken", token, {
             maxAge: 10800000,
@@ -74,15 +79,20 @@ router.post("/login", async (req, res) => {
 
 
     } catch (error) {
-        res.status(500).send("Error de login");
+        res.status(500).send("Error de login", error);
     }
 })
 
 
 router.get("/current", passport.authenticate("jwt",{ session:false }), (req,res)=>{
     
+    // if(req.user){
+    //     res.render("bienv", {usuario: req.user.usuario});
+
     if(req.user){
-        res.render("bienv", {usuario: req.user.usuario});
+        const user=req.user;
+        const userDTO= new UserDTO(user)
+        res.render("bienv", {usuario: userDTO});
     }else {
         res.status(401).send("No autorizado")
     }
@@ -95,15 +105,13 @@ router.post("/logout", (req, res) => {
 })
 
 
-router.get("/admin", passport.authenticate("jwt", {session:false}), (req, res) => {
+// router.get("/admin", passport.authenticate("jwt", {session:false}), (req, res) => {
     
-    if(req.user.rol !== "admin") {
-        return res.status(403).render("sinPermisos"); 
-    } 
-    res.render("realtimeproducts"); 
-})
-
-
+//     if(req.user.rol !== "admin") {
+//         return res.status(403).render("sinPermisos"); 
+//     } 
+//     res.render("realtimeproducts"); 
+// })
 
 
 export default router 

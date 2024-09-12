@@ -2,7 +2,7 @@ import productsModel from "../models/products.model.js";
 
 class ProductManager {
 
-    async addProduct({ name, brand, description, price, img, code, stock, category, status, thumbnails}) {
+    async addProduct({ name, brand, fullname, description, price, img, code, stock, category, status, thumbnails}) {
         try {
             
 
@@ -21,6 +21,7 @@ class ProductManager {
             const newProduct = new productsModel( {
                 name,
                 brand,
+                fullname,
                 description,
                 price,
                 img,

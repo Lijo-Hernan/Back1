@@ -12,19 +12,25 @@ import ProductManager from "./dao/db/productManagerDb.js"
 import "./database.js"
 import passport from "passport";
 import initializePassport from "./config/passport.config.js";
-import cookieParser from "cookie-parser" 
+import cookieParser from "cookie-parser"; 
+import configObject from "./config/config.js";
+import cors from "cors";
+import contactRouter from "./routes/contacto.routes.js"
+import ProductDTO from "./dto/product.dto.js"
 
 
+const {PORT}= configObject;
 const PUERTO = 8080;
 const app = express();
 const cartManager = new CartManager();
-const productManager = new ProductManager();
+const productManager = new ProductManager(); 
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(express.static("./src/public"));
 app.use(cookieParser());
 app.use(passport.initialize());
+app.use(cors());
 initializePassport();
 
 app.engine("handlebars", engine());
@@ -32,13 +38,13 @@ app.set("views", "./src/views");
 app.set("view engine", "handlebars");
 
 
-const httpServer = app.listen(PUERTO, ()=>{
+const httpServer = app.listen(PORT,()=>{
     displayRoutes(app)
+    console.log("escuchando en el puerto:" +PORT)
 });
 
 const stats = async ()=> {
     const resp= await productsModel.find({status:true}).explain("executionStats");
-
     console.log(resp)
 }
 // stats()
@@ -48,6 +54,8 @@ app.use("/", viewsRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartRouter);
 app.use("/api/sessions", sessionRouter);
+app.use("/contacto", contactRouter)
+
 
 const io = new Server(httpServer);
 
@@ -89,8 +97,12 @@ io.on("connection", async (socket) => {
     })
 
     socket.on("addProduct", async (product) => {
+
+        const { name, brand, description, price, img, category, code, stock, status } = product;
         try {
-            const newProduct = await productManager.addProduct(product);
+            const productDTO = new ProductDTO(name, brand, description, price, img, category, code, stock, status);
+
+            const newProduct = await productManager.addProduct(productDTO);
 
             io.sockets.emit("products", await productManager.getProducts({ page: 1, limit: 5 }));
 
