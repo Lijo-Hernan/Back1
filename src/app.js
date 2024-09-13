@@ -161,7 +161,8 @@ io.on("connection", async (socket) => {
         
     })
 
-    socket.on("addProdToCart", async (products) => {
+    //Agregado de productos al carrito de cliente 
+    socket.on('addProdToCart', async ({ cartId, products }) => {
         try {
             if (!Array.isArray(products)) {
                 throw new Error('Products should be an array');
