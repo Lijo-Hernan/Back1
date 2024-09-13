@@ -169,7 +169,7 @@ io.on("connection", async (socket) => {
         
     })
 
-    //Armado de carrito desde el Home
+    //Agregado de productos al carrito de cliente 
     socket.on('addProdToCart', async ({ cartId, products }) => {
         try {
             if (!Array.isArray(products)) {
