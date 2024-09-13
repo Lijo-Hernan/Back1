@@ -13,16 +13,16 @@ const cartManager = new CartManager();
 router.post("/register", async(req,res)=> {
     const {usuario, nombre, apellido, email, edad, rol, password}= req.body
 
-    const newCartId = await cartManager.createCart();
-
+    
     try {
         const userExist= await UsersModel.findOne({usuario});
         const mailExist= await UsersModel.findOne({email});
-
+        
         if(userExist || mailExist){
             return res.status(400).send("El nombre de usuario o email ya estan en uso")
         }
-
+        
+        const newCartId = await cartManager.createCart();
         const newUSer = new UsersModel({
         // const newUSer = await userService.newUser({
             usuario,
@@ -37,7 +37,7 @@ router.post("/register", async(req,res)=> {
         })
         await newUSer.save()
 
-        const token= jwt.sign({usuario: newUSer.nombre, rol: newUSer.rol, email: newUSer.email }, "elAbuelo", {expiresIn: "2h"});
+        const token= jwt.sign({usuario: newUSer.nombre, rol: newUSer.rol, email: newUSer.email, cartId: newUSer.cartId  }, "elAbuelo", {expiresIn: "2h"});
 
         res.cookie("abueloToken", token, {
             maxAge: 10800000,
@@ -68,7 +68,7 @@ router.post("/login", async (req, res) => {
             return res.status(401).send("Credenciales invalidas");
         }
         
-        const token = jwt.sign({ usuario: userFinded.usuario, rol: userFinded.rol, email: userFinded.email, nombre: userFinded.nombre }, "elAbuelo", { expiresIn: "2h" });
+        const token = jwt.sign({ usuario: userFinded.usuario, rol: userFinded.rol, email: userFinded.email, nombre: userFinded.nombre, cartId: userFinded.cartId }, "elAbuelo", { expiresIn: "2h" });
 
         res.cookie("abueloToken", token, {
             maxAge: 10800000,

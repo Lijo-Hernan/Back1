@@ -17,6 +17,7 @@ import configObject from "./config/config.js";
 import cors from "cors";
 import contactRouter from "./routes/contacto.routes.js"
 import ProductDTO from "./dto/product.dto.js"
+import mongoose from "mongoose"
 
 
 const {PORT}= configObject;
@@ -162,20 +163,32 @@ io.on("connection", async (socket) => {
 
     socket.on("addProdToCart", async (products) => {
         try {
-            let cart = await cartManager.createCart();
+            if (!Array.isArray(products)) {
+                throw new Error('Products should be an array');
+            }
 
+            if (!mongoose.Types.ObjectId.isValid(cartId)) {
+                throw new Error('ID de carrito no válido');
+            }
+
+            const cart = await cartManager.getCartById(cartId);
             if (!cart) {
-                throw new Error('Error al crear o encontrar el carrito');
-            } else {
-            for (const { id, quantity } of products) {
-                await cartManager.addProdToCart(cart._id, id, quantity);
+                throw new Error('Carrito no encontrado');
             }
-            
-            socket.emit('redirect', { url: `/realtimecarts` });
-            
-            }
-        }
 
+            products.forEach(product => {
+                const existingProduct = cart.products.find(p => p.id.toString() === product.id);
+                if (existingProduct) {
+                    existingProduct.quantity += product.quantity;
+                } else {
+                    cart.products.push({ product: product.id, quantity: product.quantity });
+                }
+            });
+            await cart.save();
+            
+            socket.emit('redirect', { url: `/cart/${cartId}` });
+            
+            }
         catch (error) {
             console.error('Error generando carrito:', error);
             socket.emit('error', { message: 'Error agregando productos' });
@@ -183,7 +196,6 @@ io.on("connection", async (socket) => {
 
     })
 })
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 

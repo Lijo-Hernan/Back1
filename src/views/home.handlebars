@@ -1,8 +1,8 @@
-<h1>Bienvenido {{usuario}}, lista de productos</h1>
+<h1>Bienvenido {{usuario.nombre}}, lista de productos</h1>
 
 
 <div class="botones__home">
-    <a href="/realtimecarts"  class="btn btn-primary button">Ver Carrito</a>
+    <a href="/cart/{{usuario.cartId}}"  class="btn btn-primary button">Ver Carrito</a>
     <a href="/contacto"  class="btn btn-primary button">Contacto</a>
     <form action="/api/sessions/logout" method="POST">
         <button type="submit" class="btn btn-primary button"> Cerrar sesion </button>
@@ -12,6 +12,6 @@
     <h3>Seleccione las cantidades necesarias antes de agregar al carrito</h3>
 <div id="productList" class="list container-xl"></div>
 
-
+<script>const cartId = "{{usuario.cartId}}";</script>
 <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
 <script src="/js/home.js"></script>
