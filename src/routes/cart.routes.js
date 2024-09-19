@@ -2,6 +2,11 @@ import { Router } from "express";
 import fs from "fs";
 import path from "path";
 import CartManager from "../dao/db/cartManagerDb.js";
+import ProductsModel from "../dao/models/products.model.js";
+import UsersModel from "../dao/models/users.model.js";
+import TicketModel from "../dao/models/ticket.model.js";
+import { totalAcc } from "../utils/util.js";
+import ProductDTO from "../dto/product.dto.js";
 
 const router = Router(); 
 
@@ -112,6 +117,61 @@ router.delete('/:cid/product', async (req, res)=>{
         
     } catch (error) {
         console.error('Error al vaciar el carrito', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+})
+
+router.get("/:cid/purchase", async (req, res)=>{
+    const cartId= req.params.cid;
+
+    try{
+        const cart= await cartManager.getCartById(cartId);
+        const products= cart.products;
+        console.log(products)
+
+        const productsNoStock= [];
+
+        for (const item of products){
+            const productId= item.product;
+
+            const product= await ProductsModel.findById(productId);
+
+            if(product.stock >= item.quantity){
+                product.stock -= item.quantity;
+                await product.save();
+            }else {
+                productsNoStock.push(productId);
+            }
+        }
+
+        const cartUser = await UsersModel.findOne({cartId: cartId});
+
+        const ticket= new TicketModel({
+            purchaser: cartUser.email,
+            amount: totalAcc(products),
+            products: products,
+            purchase_datetime: new Date()
+
+        });
+
+        await ticket.save();
+
+        cart.products= cart.products.filter(product => productsNoStock.some(id => id.equals(product.product)));
+
+        await cart.save();
+
+        res.json ({
+            message: "Se ha realizado la compra de compra",
+            ticket:{
+                id: ticket._id,
+                amount: ticket.amount,
+                purchaser: ticket.purchaser,
+            },
+            productsNoStock
+        })
+
+    }catch(error){
+        console.error('Error al realizar la compra de venta', error);
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 })
