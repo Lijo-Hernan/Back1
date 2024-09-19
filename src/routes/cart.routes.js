@@ -127,7 +127,6 @@ router.get("/:cid/purchase", async (req, res)=>{
     try{
         const cart= await cartManager.getCartById(cartId);
         const products= cart.products;
-        console.log(products)
 
         const productsNoStock= [];
 
@@ -146,9 +145,15 @@ router.get("/:cid/purchase", async (req, res)=>{
 
         const cartUser = await UsersModel.findOne({cartId: cartId});
 
+        const productsInStock = products.filter(item => 
+            !productsNoStock.some(id => id.equals(item.product))
+        );
+
+        const total = totalAcc(productsInStock);
+
         const ticket= new TicketModel({
             purchaser: cartUser.email,
-            amount: totalAcc(products),
+            amount: total,
             products: products,
             purchase_datetime: new Date()
 
@@ -161,7 +166,7 @@ router.get("/:cid/purchase", async (req, res)=>{
         await cart.save();
 
         res.json ({
-            message: "Se ha realizado la compra de compra",
+            message: "Se ha realizado la compra con exito",
             ticket:{
                 id: ticket._id,
                 amount: ticket.amount,
